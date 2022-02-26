@@ -16,6 +16,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride('_method'));
 // Expose the files stored in the public folder
 app.use(express.static('public'));
+// Express body parser
+app.use(express.json());
 
 // Bind route definitions to the Express application
 bindRoutes(app);
