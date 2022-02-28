@@ -1,5 +1,3 @@
-// ============================= DOM HELPERS ===================================
-
 const createContainer = (conId, conColour) => {
   const newDiv = document.createElement('div');
   newDiv.id = conId;
