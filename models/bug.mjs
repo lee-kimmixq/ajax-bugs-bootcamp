@@ -12,7 +12,7 @@ export default function initBugModel(sequelize, DataTypes) {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      error_text: {
+      errorText: {
         allowNull: true,
         type: DataTypes.STRING,
       },
@@ -20,7 +20,7 @@ export default function initBugModel(sequelize, DataTypes) {
         allowNull: true,
         type: DataTypes.STRING,
       },
-      feature_id: {
+      featureId: {
         allowNull: false,
         type: DataTypes.INTEGER,
         references: {
@@ -28,12 +28,12 @@ export default function initBugModel(sequelize, DataTypes) {
           key: 'id',
         },
       },
-      created_at: {
+      createdAt: {
         allowNull: false,
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
-      updated_at: {
+      updatedAt: {
         allowNull: false,
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,

@@ -4,11 +4,9 @@ export default function initBugsController(db) {
       const {
         problem, error, commit, feature,
       } = req.body;
-
-      // why cannot do featureObj.createBug -- error that feature_id cannot be null
       const featureObj = await db.Feature.findOne({ where: { name: feature } });
-      const bug = await db.Bug.create({
-        problem, error_text: error, commit, feature_id: featureObj.id,
+      const bug = await featureObj.createBug({
+        problem, errorText: error, commit,
       });
       res.send(bug);
     } catch (err) {

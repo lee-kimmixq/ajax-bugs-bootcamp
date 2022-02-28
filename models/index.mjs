@@ -15,7 +15,7 @@ const sequelize = new Sequelize(config.database, config.username, config.passwor
 db.Bug = initBugModel(sequelize, Sequelize.DataTypes);
 db.Feature = initFeatureModel(sequelize, Sequelize.DataTypes);
 
-db.Bug.belongsTo(db.Feature);
+db.Bug.belongsTo(db.Feature, { foreignKey: 'featureId' });
 db.Feature.hasMany(db.Bug);
 
 db.sequelize = sequelize;
