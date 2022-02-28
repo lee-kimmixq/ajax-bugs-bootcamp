@@ -15,12 +15,13 @@ const createLabel = (labelFor, labelText) => {
   return newLabel;
 };
 
-const createInput = (inputType, inputId, inputName, inputValue) => {
+const createInput = (inputType, inputId, inputName, inputValue, inputRequired) => {
   const newInput = document.createElement('input');
   newInput.type = inputType;
   newInput.id = inputId;
   newInput.name = inputName;
   newInput.value = inputValue;
+  newInput.required = inputRequired;
   return newInput;
 };
 
@@ -34,27 +35,47 @@ const createButton = (btnId, btnText, btnCallback) => {
 
 // ============================= BUG LIST ===================================
 
-const renderBugList = async () => {
+const renderBugListData = async () => {
+  const bugDataDiv = document.querySelector('#bug-data-container');
+  const sortBtn = document.querySelector('#sort-btn');
+  const sortBy = sortBtn.classList.contains('sort-by-date') ? 'feature' : 'date';
+
+  bugDataDiv.innerText = '';
+
   axios
-    .get('/bugs')
+    .get(`/bugs?sort=${sortBy}`)
     .then((res) => {
-      const bugListDiv = document.querySelector('#bug-list-container');
-
-      // create header
-      const bugListHeader = document.createElement('h4');
-      bugListHeader.innerText = 'Reported Bugs';
-      bugListDiv.appendChild(bugListHeader);
-
       // populate bug data
       res.data.forEach(({
         problem, errorText, commit, feature,
       }, idx) => {
         const bug = document.createElement('p');
         bug.innerText = `${idx + 1}) Problem: ${problem}, Error: ${errorText} , Commit: ${commit}, Feature: ${feature.name}`;
-        bugListDiv.appendChild(bug);
+        bugDataDiv.appendChild(bug);
       });
     })
     .catch((err) => { console.log(err); });
+};
+
+const createBugList = async () => {
+  const bugListDiv = document.querySelector('#bug-list-container');
+
+  // create header
+  const bugListHeader = document.createElement('h4');
+  bugListHeader.innerText = 'Reported Bugs';
+  bugListDiv.appendChild(bugListHeader);
+
+  // create sort button
+  const sortBtn = createButton('sort-btn', 'Sort by Feature', (event) => {
+    event.target.classList.toggle('sort-by-date');
+    const btnText = event.target.classList.contains('sort-by-date') ? 'Sort by Feature' : 'Sort by Date';
+    event.target.innerText = btnText;
+    renderBugListData();
+  });
+  bugListDiv.appendChild(sortBtn);
+
+  bugListDiv.appendChild(createContainer('bug-data-container'));
+  renderBugListData();
 };
 
 // ============================= BUG FORM ===================================
@@ -102,12 +123,13 @@ const createBugForm = () => {
         const fieldDiv = document.createElement('div');
         bugDiv.appendChild(fieldDiv);
         fieldDiv.appendChild(createLabel(field, field));
-        fieldDiv.appendChild(createInput('text', field, field, ''));
+        const fieldRequired = field === 'problem';
+        fieldDiv.appendChild(createInput('text', field, field, '', fieldRequired));
       });
 
       // create radio buttons for features
       res.data.forEach(({ name }) => {
-        bugDiv.appendChild(createInput('radio', name, 'features', name));
+        bugDiv.appendChild(createInput('radio', name, 'features', name, true));
         bugDiv.appendChild(createLabel(name, name));
       });
 
@@ -160,7 +182,7 @@ const main = () => {
   createContainer('bug-list-container', 'rgb(255,255,224)');
   createContainer('feature-form-container', 'rgb(173,216,230)');
   createBugForm();
-  renderBugList();
+  createBugList();
   createFeatureForm();
 };
 

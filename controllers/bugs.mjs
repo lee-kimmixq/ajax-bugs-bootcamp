@@ -1,3 +1,5 @@
+import Sequelize from 'sequelize';
+
 export default function initBugsController(db) {
   const createBug = async (req, res) => {
     try {
@@ -15,7 +17,16 @@ export default function initBugsController(db) {
   };
 
   const getBugs = async (req, res) => {
-    const bugs = await db.Bug.findAll({ include: db.Feature });
+    const orderObj = {
+      '': ['createdAt'],
+      feature: [Sequelize.literal('feature.name')],
+      date: ['createdAt'],
+    };
+
+    const bugs = await db.Bug.findAll({
+      include: db.Feature,
+      order: orderObj[req.query.sort],
+    });
     res.send(bugs);
   };
 
